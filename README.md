@@ -1,12 +1,13 @@
 # vfio-single-amdgpu-passthrough
 This repo is a tutorial for single amd gpu passthrough to various qemu VMs.
-After reading some great turorials by [Maagu Karuri](https://gitlab.com/Karuri/vfio) and [Joe Knockenhauer](https://github.com/joeknock90/Single-GPU-Passthrough) I wanted to try it myself, unfortunately there was no instructions for amd gpus, jsut warning about the dreaded reset bug.
+After reading some great turorials by [Maagu Karuri](https://gitlab.com/Karuri/vfio) and [Joe Knockenhauer](https://github.com/joeknock90/Single-GPU-Passthrough) I wanted to try it myself, unfortunately there were no instructions for amd gpus, just warnings about the dreaded reset bug.
 
-So this will be my first attempt at contributing back ot this community of entuziasts and tinkers.
+So, this will be my first attempt at contributing back to this community of enthusiasts and tinkers.
 
-This descriotion will be changed and beautified, but untill then, lets get to the improtant stuff.
+This description will be changed and beautified, but untill then, lets get to the improtant stuff.
 
-Considering that you probably already seen the other tutroials and have an ideea about what goes on, i'll just show why it didn't work for me, and after that I'll show you the fina working version.
+Considering that you already seen the other tutroials and have an ideea about what goes on, i'll just show why it didn't work for me, and after that I'll show you the final working version of start.sh. Please keep in mind that, the gpu has already been added in the vm xml, and vfio has also been enabled, but that's it, no nomode
+set or efifb:off was used.
 
 ```sh
 #!/bin/bash
@@ -50,12 +51,13 @@ modprobe vfio
 modprobe vfio_pci
 modprobe vfio_iommu_type1
 ```
-The reason why it lock up is because we are basically cuting the gpu short without lettign the driver know that it will end, with nvidia it works because the driver knows how to reset itself, amd's doesn't
+The reason why it locks up, is because we are basically cutting the gpu short without letting the driver know that it will end, with NVidia it works because the driver knows how to reset itself, amd's doesn't
 
-The woking version will be attached as start.sh , but just to explain a bit, this is what I did, and the reason behind it.
+The working version will be attached as start.sh , but just to explain a bit, this is what I did, and the reason behind it.
 
-First things first, after killing the display manager, we have to kill pulseAudio and pipewire, we get the process id for both of them and them we kill them.
-We do this because our gpu is used by amdgpu(as a display adapter) and by snd_hda_intel(as a audio output for hdmi), this can be checked using the follwoing command:
+First things first, after killing the display manager, we have to kill pulseAudio and pipewire, we get the process id for both of them using pgrep, and then we kill them.
+We do this because our gpu is used by amdgpu(as a display adapter) and by snd_hda_intel(as an audio output for hdmi), this can be checked using the following command:
+
 lspci -v:
 ```
 09:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 470/480/570/570X/580/580X/590] (rev e7) (prog-if 00 [VGA controller])
@@ -77,7 +79,10 @@ lspci -v:
 ```
 
 Next we unbing the VTConsoles without unbinding the EFI-Framebuffer, because if we would do that , we would get a segmentation fault.
-Instead, now that the display manager and pulseaudio are off ,we can unload all the modules that use the gpu(both the video and audio part)
+Instead, now that the display manager and pulseaudio are off ,we can unload all the modules(amdgpu and snd_hda_intel) that use the gpu(both the video and audio part)
 
-After that is done, we now detach the gpu using virsh, and we load the vfio modules and thats it, if you added the gpu to you VM and you configured it to use q35 efi nstead of bios, everything will work :D .
+After that is done, we now detach the gpu using virsh, and we load the vfio modules and thats it, if you added the gpu to you VM and you configured it to use q35 efi instead of bios, everything will work :D .
+One last trick would be to always remove the monitor(spice or vnc) and vgpu of the vm(qxl or virtio), by doing so, you will see the bios/efi output as well as the final os on your passed gpu.
+
+Again, huge thanks to Maagu Karuri annd Joe Knockenhauer for there work and dedication.
 
