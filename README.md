@@ -78,7 +78,7 @@ lspci -v:
 
 ```
 
-Next we unbing the VTConsoles without unbinding the EFI-Framebuffer, because if we would do that , we would get a segmentation fault.
+Next we unbind the VTConsoles without unbinding the EFI-Framebuffer, because if we would do that , we would get a segmentation fault.
 Instead, now that the display manager and pulseaudio are off ,we can unload all the modules(amdgpu and snd_hda_intel) that use the gpu(both the video and audio part)
 
 After that is done, we now detach the gpu using virsh, and we load the vfio modules and thats it, if you added the gpu to you VM and you configured it to use q35 efi instead of bios, everything will work :D .
@@ -86,3 +86,7 @@ One last trick would be to always remove the monitor(spice or vnc) and vgpu of t
 
 Again, huge thanks to Maagu Karuri annd Joe Knockenhauer for there work and dedication.
 
+#BONUS: [vendor-reset](https://github.com/gnif/vendor-reset) , this will allow you to always(or almost always) be able to have a clean release of the gpu when you stop a vm.
+As far as I'm concerned, it works great for my card, some say it does not work for everyone, for me it does.
+Some operating systems are almost guaranteed to do a clean shutdown, but others like macOS are not
+And of course, by using vendor-reset, you can safely kill(virsh destroy) any stuck vm, without the risk of losing the usability of the card until a new reset. 
