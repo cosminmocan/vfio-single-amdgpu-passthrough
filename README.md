@@ -84,6 +84,8 @@ Instead, now that the display manager and pulseaudio are off ,we can unload all 
 After that is done, we now detach the gpu using virsh, and we load the vfio modules and thats it, if you added the gpu to you VM and you configured it to use q35 efi instead of bios, everything will work :D .
 One last trick would be to always remove the monitor(spice or vnc) and vgpu of the vm(qxl or virtio), by doing so, you will see the bios/efi output as well as the final os on your passed gpu.
 
+As of 27/1/2021 I have also added my stop.sh script, if my start.sh script(which I also updated today) work for you, the stop.sh should work as well.
+
 Again, huge thanks to Maagu Karuri annd Joe Knockenhauer for there work and dedication.
 
 #BONUS: [vendor-reset](https://github.com/gnif/vendor-reset) , this will allow you to always(or almost always) be able to have a clean release of the gpu when you stop a vm.
