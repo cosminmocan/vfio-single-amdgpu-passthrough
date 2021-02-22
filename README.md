@@ -52,7 +52,8 @@ modprobe vfio
 modprobe vfio_pci
 modprobe vfio_iommu_type1
 ```
-DO NOT USE THIS FOR YOUR START.SH , use the start.sh uploaded by me
+DO NOT USE THIS FOR YOUR START.SH , use the start.sh uploaded by me!
+
 The reason why it locks up, is because we are basically cutting the gpu short without letting the driver know that it will end, with NVidia it works because the driver knows how to reset itself, amd's doesn't
 
 The working version will be attached as start.sh , but just to explain a bit, this is what I did, and the reason behind it.
