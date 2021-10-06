@@ -24,11 +24,6 @@ systemctl stop lightdm.service
 echo 0 > /sys/class/vtconsole/vtcon0/bind
 echo 0 > /sys/class/vtconsole/vtcon1/bind
 
-!!!!!!!!!!!
-# Unbind EFI-Framebuffer   !!! #HERE you will get a segmentation fault and everything will lock up !!!
-#echo efi-framebuffer.0 > /sys/bus/platform/drivers/efi-framebuffer/unbind
-# The command above is commented as it will give you a segfault.
-!!!!!!!!!!!
 
 
 # Avoid a race condition by waiting a couple of seconds. This can be calibrated to be shorter or longer if required for your system
